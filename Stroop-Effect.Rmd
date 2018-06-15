@@ -1,0 +1,137 @@
+---
+title: "Stroop Effect Statistics Project"
+author: "Sunny Jiang"
+date: "December 19, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+```
+
+
+## Backgroud Imformation
+
+The **Stroop effect** is a demonstration of interference in the reaction time of
+a task. When the name of a color (e.g. "blue", "green", or "red") is printed in 
+a color that is not denoted by the name (e.g. the word "red" printed in blue ink
+instead of red ink), naming the color of the word takes longer and is more prone
+to errors than when the color of the ink matches the name of the color.
+
+**Congruent** words condition: the words being displayed are color words whose 
+names match the colors in which they are printed. For example:
+
+![](E:\Udacity\Data Analyst\Statistic Project\Congruent.png)
+
+
+**Incongruent** words condition: the words being displayed are color words whose
+names **do not** match the colors in which they are printed. For example:
+
+![](E:\Udacity\Data Analyst\Statistic Project\Incongruent.png)
+
+***
+
+## Data Exploration
+
+The sample size for the data we are going to use is 24. Including the time used 
+to finishe Congruent and Incongruent tests. First explore the data by
+plotting histgram and density plot. We can see the average time used for 
+Congruent test is around 13 and 21 for Incongruent test.
+
+
+```{r set dirctory and input data}
+setwd("E:/Udacity/Data Analyst/Statistic Project")
+
+library(ggplot2) #must load the ggplot package first
+library(dplyr)
+library(gridExtra)
+
+# bring in the data set
+test_data <- read.csv("Stroop Test Data.csv", header = TRUE, fill = TRUE, 
+                      sep = ",", row.names = NULL)
+
+trans_data <- read.csv("Stroop Test Data_2.csv", header = TRUE, fill = TRUE, 
+                       sep = ",", row.names = NULL)
+```
+
+
+```{r plot histogram for data}
+grid.arrange(ggplot(data = test_data, aes(x=Congruent)) +
+                 geom_histogram(binwidth = 1, fill = "grey", color = "black"),
+             ggplot(data = test_data, aes(x=Incongruent)) +
+                 geom_histogram(binwidth = 1, fill = "grey", color = "black"), 
+             nrow =1)
+```
+
+```{r plot density and distribution line}
+grid.arrange(ggplot(data = test_data, aes(x=Congruent, y = ..density..)) +
+                 geom_histogram(binwidth = 1, fill = "grey", color = "black") +
+                 geom_density(alpha=.2, color = "red"),
+             ggplot(data = test_data, aes(x=Incongruent, y = ..density..)) +
+                 geom_histogram(binwidth = 1, fill = "grey", color = "black") +
+                 geom_density(alpha=.2, color = "red"),
+             nrow =1)
+```
+
+By plotting the two tests results into one plot, we can clearly see that nomally
+the time used in Congruent test is less.
+
+```{r conbine two plots into one}
+ggplot(data = trans_data, aes(x = Time, y = ..density.., fill = Type)) + 
+    geom_histogram(alpha=0.5, binwidth = 1, position="identity", 
+                   color = "black") +
+    geom_density(alpha=.2)
+```
+
+***
+
+## Questions For Investigation
+
+1. Variable
+    + Independent Variable: Time used (in seconds) to finishe the test
+    + Dependent Variable: Type of the test (Congruent or Incongruent)
+    
+    
+2. Hypotheses Test: since we don't know the mean and standard deviation of the
+entire population, we can't use z-test. And the data set we have are the 
+participants from two paired trials. So we need to use 
+**one-tail dependent t-test in the negative direction**.
+    + **Null hypothesis**: The congruent response time is greater or there is no
+    siginificant difference in the population average amount of time it takes to
+    state the colors of the words in a congruent or incongruent condition.
+    + **Alternative hypothesis**: The congruent response time is lessin the 
+    population average amount of time it takes to state the colors of the words 
+    in a congruent or incongruent condition
+    
+3. Written in mathematical symbols
+    + $H_0 : \mu_C >= \mu_I$
+    + $H_A : \mu_C < \mu_I$
+    
+    or
+    
+    + $H_0 : \mu_D >= 0$
+    + $H_A : \mu_D < 0$
+
+***
+
+##Hypotheses Test
+
+First calculate the t-critical value at an alpha level of 0.05: Since sample
+size is 24, the degrees of freedom is 23. Look up on t-table, when alpha level
+is 0.05, and one-tail on the left side, the t-critical value is **-1.714**.
+
+Then calculate sample mean, Standard Deviation and t statistic:
+
+$$\bar{X_D} = \frac{\sum_{i=1}^{n}(X_{ci} - X_{Ii})}{n} = -7.96$$
+$$S_D = \sqrt{\frac{\sum(\bar{D}-d_i)^2}{n-1}} = 4.86$$
+$$t = \frac{\bar{X_D}}{S_D / \sqrt{n}} = \frac{7.96}{4.86/\sqrt{24}} = -8.02$$
+
+Since $-8.02< -1.714$, reject $H_0$ hypotheses. The time used to finishe the 
+Congruent test is less.
+
+***
+
+##References
+https://en.wikipedia.org/wiki/Stroop_effect
+
+https://faculty.washington.edu/chudler/java/ready.html
