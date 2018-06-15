@@ -9,3 +9,5 @@ The **Stroop effect** is a demonstration of interference in the reaction time of
 - Used R to do data exploration by plotting histogram and density plot
 - Used Hypotheses Test to prove that we will reject **H0** hypotheses. The time used to finished the Congruent test is less
 - Used R Markdown to document the process and findings
+
+Preview the HTML file using this link: https://htmlpreview.github.io/?https://github.com/sunnyj529/Stroop-Effect/blob/master/Stroop-Effect.html
